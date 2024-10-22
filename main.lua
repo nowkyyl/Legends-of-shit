@@ -17,14 +17,14 @@ local section = tab:CreateSection("Main")
 
 tab:CreateToggle({
     Name = "Auto Orbs",
-    CurrentValue = false,
+    CurrentValue = _G.collectOrbs or false,
     Flag = "Orbs",
     Callback = events.CollectOrbs
 })
 
 tab:CreateToggle({
     Name = "Auto Hoops",
-    CurrentValue = false,
+    CurrentValue = _G.collectHoops or false,
     Flag = "Hoops",
     Callback = events.CollectHoops
 })
