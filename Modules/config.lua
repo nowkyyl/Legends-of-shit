@@ -7,17 +7,16 @@ function Config.SaveSettings()
 end
 
 function Config:LoadSettings()
-    if isfile and isfile("LegendsOfShit.json") then
-        local settings = {}
+    if readfile then
         local new = HttpService:JSONDecode(readfile("LegendsOfShit.json"))
         for i, v in new do
-            settings[i] = v
+            shared.settings[i] = v
         end
 
         self:SaveSettings()
     end
 
-    return settings
+    return shared.settings
 end
 
 function Config.GetSettings()
