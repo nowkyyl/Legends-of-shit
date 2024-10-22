@@ -24,7 +24,7 @@ function Events.CollectOrbs(active)
         for i, v in orbs[map.Value]:GetChildren() do
             if table.find(shared.settings.selectedOrbs, v.Name) then
                 for i = 1, 5 do
-                    task.spawn(orbEvent.FireServer, orbEvent, "collect", v.Name, map.Value)
+                    task.spawn(orbEvent.FireServer, orbEvent, "collectOrb", v.Name, map.Value)
                 end
                 task.wait()
             end
@@ -54,7 +54,7 @@ function Events.RaceAction(active)
 
     _G.raceSignal = raceActive:GetPropertyChangedSignal("Value"):Connect(function()
         if raceActive.Value then
-            raceEvent:FireServer("join")
+            raceEvent:FireServer("joinRace")
             task.wait(1.5)
     
             local currentMap = map.Value:split(" ")[1]
@@ -81,7 +81,7 @@ function Events.DoRebirth(active)
     _G.autoRebirth = requiredRebirthLabel:GetPropertyChangedSignal("Text"):Connect(function()
         local requiredLevel = requiredRebirthLabel.Text:gsub("%D", "")
         if level.Value >= tonumber(requiredLevel) and (rebirthCount.Value < shared.settings.maxRebirths) then
-            rebirthEvent:FireServer("rebirth")
+            rebirthEvent:FireServer("rebirthRequest")
         end
     end)
 end
