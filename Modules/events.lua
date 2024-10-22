@@ -1,3 +1,4 @@
+
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local player = game.Players.LocalPlayer
 
@@ -67,7 +68,7 @@ function Events.RaceAction(active)
                 player.Character.HumanoidRootPart.CFrame = selectedMap.finishPart.CFrame
             end
         end
-    end
+    end)
 end
 
 function Events.DoRebirth(active)
@@ -82,7 +83,7 @@ function Events.DoRebirth(active)
         if level.Value >= tonumber(requiredLevel) and (rebirthCount.Value < shared.settings.maxRebirths) then
             rebirthEvent:FireServer("rebirth")
         end
-    end
+    end)
 end
 
 return Events
