@@ -78,7 +78,7 @@ function Events.DoRebirth(active)
         return
     end
 
-    _G.autoRebirth = level:GetPropertyChangedSignal("Text"):Connect(function()
+    _G.autoRebirth = level:GetPropertyChangedSignal("Value"):Connect(function()
         local requiredLevel = requiredRebirthLabel.Text:gsub("%D", "")
         if level.Value >= tonumber(requiredLevel) and (rebirthCount.Value < shared.settings.maxRebirths) then
             rebirthEvent:FireServer("rebirthRequest")
