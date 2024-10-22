@@ -21,6 +21,7 @@ function Events.CollectOrbs(active)
     _G.collectOrbs = active
     while _G.collectOrbs do
         for i, v in orbs[map.Value]:GetChildren() do
+            if (v.Name == shared.settings.selectedOrb or v.Name == "Gem") or shared.settings.selectedOrb == "All" then
             for i = 1, 5 do
                 task.spawn(orbEvent.FireServer, orbEvent, "collect", v.Name, map.Value)
             end
@@ -42,28 +43,44 @@ function Events.CollectHoops(active)
     end
 end
 
-function Events.RaceAction()
-    if raceActive.Value then
-        raceEvent:FireServer("join")
-        task.wait(1.5)
+function Events.RaceAction(active)
+    if not active then
+        _G.raceSignal:Disconnect()
+        _G.raceSignal = nil
+        return
+    end
 
-        local currentMap = map.Value:split(" ")[1]
-        if currentMap == "Grass" then
-            currentMap = "Grassland"
-        end
-
-        local selectedMap = maps[currentMap]
-        if selectedMap then
-            raceStart:GetPropertyChangedSignal("Value"):Wait()
-            player.Character.HumanoidRootPart.CFrame = selectedMap.finishPart.CFrame
+    _G.raceSignal = raceActive:GetPropertyChangedSignal("Value"):Connect(function()
+        if raceActive.Value then
+            raceEvent:FireServer("join")
+            task.wait(1.5)
+    
+            local currentMap = map.Value:split(" ")[1]
+            if currentMap == "Grass" then
+                currentMap = "Grassland"
+            end
+    
+            local selectedMap = maps[currentMap]
+            if selectedMap then
+                raceStart:GetPropertyChangedSignal("Value"):Wait()
+                player.Character.HumanoidRootPart.CFrame = selectedMap.finishPart.CFrame
+            end
         end
     end
 end
 
-function Events.DoRebirth()
-    local requiredLevel = tonumber(requiredRebirthLabel.Text:gsub("%D", ""))
-    if level.Value >= requiredLevel and (rebirthCount.Value < shared.settings.maxRebirths) then
-        rebirthEvent:FireServer("rebirth")
+function Events.DoRebirth(active)
+    if not active then
+        _G.autoRebirth:Disconnect()
+        _G.autoRebirth = nil
+        return
+    end
+
+    _G.autoRebirth = requiredRebirthLabel:GetPropertyChangedSignal("Text"):Connect(function()
+        local requiredLevel = requiredRebirthLabel.Text:gsub("%D", "")
+        if level.Value >= tonumber(requiredLevel) and (rebirthCount.Value < shared.settings.maxRebirths) then
+            rebirthEvent:FireServer("rebirth")
+        end
     end
 end
 
