@@ -96,6 +96,13 @@ do
     })
 
     eggsTab:CreateToggle({
+        Name = "Auto Sell Items",
+        CurrentValue = if _G.sellItemsSignal then true else false,
+        Flag = "SellItemsToggle",
+        Callback = eventHandlers.SellItems
+    })
+
+    eggsTab:CreateToggle({
         Name = "Auto Evolve Items",
         CurrentValue = if _G.envolveSignal then true else false,
         Flag = "EvolveItemsToggle",
