@@ -14,7 +14,7 @@ local hoops = workspace.Hoops
 local level = player.level
 local rebirthCount = player.leaderstats.Rebirths
 local map = player.currentMap
-local requiredRebirthLabel = player.PvlayerGui.gameGui.rebirthMenu.neededLabel.amountLabel
+local requiredRebirthLabel = player.PlayerGui.gameGui.rebirthMenu.neededLabel.amountLabel
 
 local Events = {}
 
