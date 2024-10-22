@@ -17,6 +17,31 @@ local requiredRebirthLabel = player.PlayerGui.gameGui.rebirthMenu.neededLabel.am
 
 local Events = {}
 
+function Events.CollectOrbs(active)
+    _G.collectOrbs = active
+    while _G.collectOrbs do
+        for i, v in orbs[map.Value]:GetChildren() do
+            for i = 1, 5 do
+                task.spawn(orbEvent.FireServer, orbEvent, "collect", v.Name, map.Value)
+            end
+            task.wait()
+        end
+        task.wait()
+    end
+end
+
+function Events.CollectHoops(active)
+    _G.collectHoops = active
+    while _G.collectHoops do
+        for i, v in hoops:GetChildren() do
+            firetouchinterest(v, player.Character.HumanoidRootPart, 0)
+            firetouchinterest(v, player.Character.HumanoidRootPart, 1)
+            task.wait()
+        end
+        task.wait()
+    end
+end
+
 function Events.RaceAction()
     if raceActive.Value then
         raceEvent:FireServer("join")
@@ -37,7 +62,7 @@ end
 
 function Events.DoRebirth()
     local requiredLevel = tonumber(requiredRebirthLabel.Text:gsub("%D", ""))
-    if level.Value >= requiredLevel and (shared.maxRebirths and rebirthCount.Value < shared.maxRebirths) then
+    if level.Value >= requiredLevel and (rebirthCount.Value < shared.settings.maxRebirths) then
         rebirthEvent:FireServer("rebirth")
     end
 end
