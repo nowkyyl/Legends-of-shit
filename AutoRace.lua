@@ -14,7 +14,7 @@ if shared.autoRace then
     shared.autoRace = nil
     game.StarterGui:SetCore("SendNotification", {
         Title = "CP",
-        Text = "Auto race is stopped",
+        Text = "Auto race are stopped",
         Duration = 5
     })
     return
@@ -22,7 +22,7 @@ end
 
 game.StarterGui:SetCore("SendNotification", {
     Title = "CP",
-    Text = "Auto race is started",
+    Text = "Auto race are started",
     Duration = 5
 })
 
