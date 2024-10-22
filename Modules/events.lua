@@ -21,11 +21,12 @@ function Events.CollectOrbs(active)
     _G.collectOrbs = active
     while _G.collectOrbs do
         for i, v in orbs[map.Value]:GetChildren() do
-            if (v.Name == shared.settings.selectedOrb or v.Name == "Gem") or shared.settings.selectedOrb == "All" then
-            for i = 1, 5 do
-                task.spawn(orbEvent.FireServer, orbEvent, "collect", v.Name, map.Value)
+            if table.find(shared.settings.selectedOrbs, v.Name) then
+                for i = 1, 5 do
+                    task.spawn(orbEvent.FireServer, orbEvent, "collect", v.Name, map.Value)
+                end
+                task.wait()
             end
-            task.wait()
         end
         task.wait()
     end
