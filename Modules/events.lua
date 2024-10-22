@@ -14,7 +14,7 @@ local hoops = workspace.Hoops
 local level = player.level
 local rebirthCount = player.leaderstats.Rebirths
 local map = player.currentMap
-local requiredRebirthLabel = player.PlayerGui.gameGui.rebirthMenu.neededLabel.amountLabel
+local requiredRebirthLabel = player.PvlayerGui.gameGui.rebirthMenu.neededLabel.amountLabel
 
 local Events = {}
 
@@ -78,7 +78,7 @@ function Events.DoRebirth(active)
         return
     end
 
-    _G.autoRebirth = requiredRebirthLabel:GetPropertyChangedSignal("Text"):Connect(function()
+    _G.autoRebirth = level:GetPropertyChangedSignal("Text"):Connect(function()
         local requiredLevel = requiredRebirthLabel.Text:gsub("%D", "")
         if level.Value >= tonumber(requiredLevel) and (rebirthCount.Value < shared.settings.maxRebirths) then
             rebirthEvent:FireServer("rebirthRequest")
