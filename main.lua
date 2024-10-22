@@ -38,7 +38,7 @@ tab:CreateToggle({
 
 tab:CreateToggle({
     Name = "Auto Rebirth",
-    CurrentValue = false,
+    CurrentValue = if _G.autoRebirth then true else false,
     Flag = "Rebirth",
     Callback = events.DoRebirth
 })
