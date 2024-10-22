@@ -14,7 +14,7 @@ if shared.autoRace then
     shared.autoRace = nil
     game.StarterGui:SetCore("SendNotification", {
         Title = "CP",
-        Text = "Auto race are stopped",
+        Text = "Auto race is stopped",
         Duration = 5
     })
     return
@@ -22,14 +22,14 @@ end
 
 game.StarterGui:SetCore("SendNotification", {
     Title = "CP",
-    Text = "Auto race are started",
+    Text = "Auto race is started",
     Duration = 5
 })
 
 shared.autoRace = raceInProgress:GetPropertyChangedSignal("Value"):Connect(function()
     if raceInProgress.Value then
         raceEvent:FireServer("joinRace")
-        raceStarted:GetPropertyChangedSignal("Value"):Wait()
+        task.wait(.5)
 
         local currentMapName = player.currentMap.Value:split(" ")[1]
         if currentMapName == "Grass" then
@@ -37,14 +37,9 @@ shared.autoRace = raceInProgress:GetPropertyChangedSignal("Value"):Connect(funct
         end
     
         local raceMap = raceMaps[currentMapName]
-        if raceMap then
-            TweenService:Create(
-                player.Character.HumanoidRootPart,
-                TweenInfo.new(0.1),
-                {
-                    CFrame = raceMap.finishPart.CFrame
-                }
-            ):Play()
-        end
+        if not raceMap then return end
+
+        raceStarted:GetPropertyChangedSignal("Value"):Wait()
+        player.Character.HumanoidRootPart.CFrame = raceMap.finishPart.CFrame
     end
 end)
