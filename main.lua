@@ -1,86 +1,138 @@
 shared.settings = shared.settings or {
     maxRebirths = math.huge,
     selectedOrbs = { "Yellow Orb", "Gem" },
+    selectedCrystals = {},
+    selectedItems = {}
 }
 
 local function require(path)
-    return loadstring(game:HttpGet(("https://raw.githubusercontent.com/nowkyyl/Legends-of-shit/refs/heads/main/%s"):format(path)))()
+    return loadstring(game:HttpGet(("https://raw.githubusercontent.com/nowkyyl/Legends-of-shit/refs/heads/main/%s.lua"):format(path)))()
 end
 
-local events = require("Modules/events.lua")
-local glichRebirths = require("Modules/glich.lua")
+local eventHandlers = require("Modules/events")
+local rebirthGlitchData = require("Modules/glich")
 
 local library = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
-
-local window = library:CreateWindow({
-    Name = "Legends of shit",
+local mainWindow = library:CreateWindow({
+    Name = "Legends of Shit",
     LoadingTitle = "Loading...",
     LoadingSubtitle = "Please Wait"
 })
 
 do
-    local tab = window:CreateTab("Auto Farms", 4483362458)
-    local section = tab:CreateSection("Main")
+    local autoFarmsTab = mainWindow:CreateTab("Auto Farms", 4483362458)
+    local farmsSection = autoFarmsTab:CreateSection("Main")
 
-    tab:CreateToggle({
+    autoFarmsTab:CreateToggle({
         Name = "Auto Orbs",
-        CurrentValue = _G.collectOrbs or false,
-        Flag = "Orbs",
-        Callback = events.CollectOrbs
+        CurrentValue = if _G.collectOrbs then true else false,
+        Flag = "OrbsToggle",
+        Callback = eventHandlers.CollectOrbs
     })
 
-    tab:CreateToggle({
+    autoFarmsTab:CreateToggle({
         Name = "Auto Hoops",
-        CurrentValue = _G.collectHoops or false,
-        Flag = "Hoops",
-        Callback = events.CollectHoops
+        CurrentValue = if _G.collectHoops then true else false,
+        Flag = "HoopsToggle",
+        Callback = eventHandlers.CollectHoops
     })
 
-    tab:CreateToggle({
+    autoFarmsTab:CreateToggle({
         Name = "Auto Race",
         CurrentValue = if _G.raceSignal then true else false,
-        Flag = "Race",
-        Callback = events.RaceAction
+        Flag = "RaceToggle",
+        Callback = eventHandlers.RaceAction
     })
 
-    tab:CreateToggle({
+    autoFarmsTab:CreateToggle({
         Name = "Auto Rebirth",
         CurrentValue = if _G.autoRebirth then true else false,
-        Flag = "Rebirth",
-        Callback = events.DoRebirth
+        Flag = "RebirthToggle",
+        Callback = eventHandlers.DoRebirth
     })
 end
 
 do
-    local glichTab = window:CreateTab("Glich Rebirth")
-    local section = glichTab:CreateSection("Glich Rebirth Table")
+    local eggsTab = mainWindow:CreateTab("Eggs")
+    local eggsSection = eggsTab:CreateSection("Main")
 
-    for i = 1, #glichRebirths do
-        glichTab:CreateLabel(glichRebirths[i])
+    local crystalOptions = {}
+    for i, v in workspace.mapCrystalsFolder:GetChildren() do
+        table.insert(crystalOptions, v.Name)
+    end
+    
+    eggsTab:CreateDropdown({
+        Name = "Select Crystal",
+        MultipleOptions = true,
+        Options = crystalOptions,
+        CurrentOption = shared.settings.selectedCrystals,
+        Flag = "CrystalDropdown",
+        Callback = function(selectedCrystals)
+            shared.settings.selectedCrystals = selectedCrystals
+        end
+    })
+
+    eggsTab:CreateToggle({
+        Name = "Auto Open Crystal",
+        CurrentValue = if _G.autoOpenCrystal then true else false,
+        Flag = "OpenCrystalToggle",
+        Callback = eventHandlers.OpenCrystals
+    })
+
+    local petOptions = {}
+    for i, v in game.ReplicatedStorage.cPetShopFolder:GetChildren() do
+        table.insert(petOptions, v.Name)
+    end
+    
+    eggsTab:CreateDropdown({
+        Name = "Ignore Items to Sell",
+        MultipleOptions = true,
+        Options = petOptions,
+        CurrentOption = shared.settings.selectedItems,
+        Flag = "SellItemsDropdown",
+        Callback = function(selectedItems)
+            shared.settings.selectedItems = selectedItems
+        end
+    })
+
+    eggsTab:CreateToggle({
+        Name = "Auto Evolve Items",
+        CurrentValue = if _G.envolveSignal then true else false,
+        Flag = "EvolveItemsToggle",
+        Callback = eventHandlers.EnvolveItems
+    })
+end
+
+do
+    local glitchTab = mainWindow:CreateTab("Glitch Rebirth")
+    local glitchSection = glitchTab:CreateSection("Rebirth List")
+
+    for i, v in rebirthGlitchData do
+        glitchTab:CreateLabel(v)
     end
 end
 
 do
-    local configTab = window:CreateTab("Settings")
-    local section = configTab:CreateSection("Main")
+    local settingsTab = mainWindow:CreateTab("Settings")
+    local settingsSection = settingsTab:CreateSection("Main")
 
-    configTab:CreateInput({
+    settingsTab:CreateInput({
         Name = "Max Rebirths",
-        PlaceholderText = "input",
+        PlaceholderText = "Enter max rebirths",
         RemoveTextAfterFocusLost = false,
-        Callback = function(text)
-            shared.settings.maxRebirths = tonumber(text)
+        Callback = function(input)
+            shared.settings.maxRebirths = tonumber(input)
         end
     })
 
-    configTab:CreateDropdown({
+    settingsTab:CreateDropdown({
         Name = "Selected Orb",
         MultipleOptions = true,
         Options = { "Blue Orb", "Gem", "Orange Orb", "Red Orb", "Yellow Orb" },
         CurrentOption = shared.settings.selectedOrbs,
-        Flag = "OrbConfig",
-        Callback = function(items)
-            shared.settings.selectedOrbs = items
+        Flag = "OrbSelection",
+        Callback = function(selectedOrbs)
+            shared.settings.selectedOrbs = selectedOrbs
         end
     })
 end
