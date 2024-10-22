@@ -3,7 +3,7 @@ local HttpService = game:GetService("HttpService")
 local Config = {}
 
 function Config.SaveSettings()
-    writefile("LegendsOfShit.json", HttpService:JSONEncode(settings))
+    writefile("LegendsOfShit.json", HttpService:JSONEncode(shared.settings))
 end
 
 function Config:LoadSettings()
@@ -17,10 +17,6 @@ function Config:LoadSettings()
     end
 
     return shared.settings
-end
-
-function Config.GetSettings()
-    return HttpService:JSONDecode(readfile("LegendsOfShit.json"))
 end
 
 return Config
