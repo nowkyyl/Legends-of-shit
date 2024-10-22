@@ -36,8 +36,11 @@ function Events.CollectHoops(active)
     _G.collectHoops = active
     while _G.collectHoops do
         for i, v in hoops:GetChildren() do
-            firetouchinterest(v, player.Character.HumanoidRootPart, 0)
-            firetouchinterest(v, player.Character.HumanoidRootPart, 1)
+            local rootPart = player.Character and player.Character:FindFirstChild("HumanoidRootPart")
+            if rootPart then
+                firetouchinterest(v, player.Character.HumanoidRootPart, 0)
+                firetouchinterest(v, player.Character.HumanoidRootPart, 1)
+            end
             task.wait()
         end
         task.wait()
