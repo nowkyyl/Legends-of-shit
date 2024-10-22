@@ -10,7 +10,6 @@ end
 local events = require("Modules/events.lua")
 local glichRebirths = require("Modules/glich.lua")
 
-warn(events, glichRebirths)
 local library = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
 
 local window = library:CreateWindow({
