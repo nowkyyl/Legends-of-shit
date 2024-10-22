@@ -42,8 +42,8 @@ shared.autoRebirthConnection = playerLevel:GetPropertyChangedSignal("Value"):Con
 shared.autoFarmEnabled = not shared.autoFarmEnabled
 
 StarterGui:SetCore("SendNotification", {
-    Title = "Auto Farm",
-    Text = "Auto farm status: " .. tostring(shared.autoFarmEnabled),
+    Title = "CP",
+    Text = "Auto farm status: " .. shared.autoFarmEnabled,
     Duration = 5
 })
 
