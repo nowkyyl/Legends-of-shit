@@ -6,6 +6,10 @@ local rebirthEvent = ReplicatedStorage.rEvents.rebirthEvent
 local raceEvent = ReplicatedStorage.rEvents.raceEvent
 local raceActive = ReplicatedStorage.raceInProgress
 local raceStart = ReplicatedStorage.raceStarted
+local sellTrail = ReplicatedStorage.rEvents.sellTrailEvent
+local sellPet = ReplicatedStorage.rEvents.sellPetEvent
+local openCrystal = ReplicatedStorage.rEvents.openCrystalRemote
+
 local maps = workspace.raceMaps
 local orbs = workspace.orbFolder
 local hoops = workspace.Hoops
@@ -14,6 +18,9 @@ local level = player.level
 local rebirthCount = player.leaderstats.Rebirths
 local map = player.currentMap
 local requiredRebirthLabel = player.PlayerGui.gameGui.rebirthMenu.neededLabel.amountLabel
+
+local petsFolder = player.petsFolder
+local trailsFolder = player.trailsFolder
 
 local Events = {}
 
@@ -47,6 +54,41 @@ function Events.CollectHoops(active)
     end
 end
 
+function Events.OpenCrystals(active)
+    _G.autoOpenCrystal = active
+    while _G.autoOpenCrystal do
+        for i, v in shared.settings.selectedCrystals do
+            task.spawn(openCrystal.InvokeServer, "openCrystal", v)
+            task.wait(.1)
+        end
+        task.wait()
+    end
+end
+
+function Events.SellItems(active)
+    if not active do
+        for i, v in _G.sellItemsSignal do
+            v:Disconnect()
+        end
+
+        _G.sellItemsSignal = nil
+        return
+    end
+
+    _G.sellItemsSignal = {
+        petsFolder.DescendantAdded:Connect(function(item)
+            if table.find(selectedItems, item.Name) then
+                sellPet:FireServer("sellPet", item)
+            end
+        end,
+        trailsFolder.DescendantAdded:Connect(function(item)
+            if table.find(selectedItems, item.Name) then
+                sellTrail:FireServer("sellTrail", item)
+            end
+        end
+    }
+end
+
 function Events.RaceAction(active)
     if not active then
         _G.raceSignal:Disconnect()
@@ -67,7 +109,7 @@ function Events.RaceAction(active)
             local selectedMap = maps[currentMap]
             if selectedMap then
                 raceStart:GetPropertyChangedSignal("Value"):Wait()
-                player.Character.HumanoidRootPart.CFrame = selectedMap.finishPart.CFrame
+                player.Character:FindFirstChild("HumanoidRootPart").CFrame = selectedMap.finishPart.CFrame
             end
         end
     end)
