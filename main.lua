@@ -31,7 +31,7 @@ tab:CreateToggle({
 
 tab:CreateToggle({
     Name = "Auto Race",
-    CurrentValue = false,
+    CurrentValue = if _G.raceSignal then true else false,
     Flag = "Race",
     Callback = events.RaceAction
 })
