@@ -8,6 +8,8 @@ local raceActive = ReplicatedStorage.raceInProgress
 local raceStart = ReplicatedStorage.raceStarted
 local sellTrail = ReplicatedStorage.rEvents.sellTrailEvent
 local sellPet = ReplicatedStorage.rEvents.sellPetEvent
+local envolvePet = ReplicatedStorage.rEvents.petEvolveEvent
+local envolveTrail = ReplicatedStorage.rEvents.evolveTrailEvent
 local openCrystal = ReplicatedStorage.rEvents.openCrystalRemote
 
 local maps = workspace.raceMaps
@@ -58,15 +60,39 @@ function Events.OpenCrystals(active)
     _G.autoOpenCrystal = active
     while _G.autoOpenCrystal do
         for i, v in shared.settings.selectedCrystals do
-            task.spawn(openCrystal.InvokeServer, "openCrystal", v)
+            task.spawn(openCrystal.InvokeServer, openCrystal, "openCrystal", v)
             task.wait(.1)
         end
         task.wait()
     end
 end
 
+function Events.EnvolveItems(active)
+    if not active then
+        for i, v in _G.envolveSignal do
+            v:Disconnect()
+        end
+
+        _G.envolveSignal = nil
+        return
+    end
+
+    _G.envolveSignal = {
+        petsFolder.DescendantAdded:Connect(function(item)
+            if table.find(shared.settings.selectedItems, item.Name) then
+                envolvePet:FireServer("evolvePet", item.Name)
+            end
+        end),
+        trailsFolder.DescendantAdded:Connect(function(item)
+            if not table.find(shared.settings.selectedItems, item.Name) then
+                envolveTrail:FireServer("evolveTrail", item)
+            end
+        end)
+    }
+end
+
 function Events.SellItems(active)
-    if not active do
+    if not active then
         for i, v in _G.sellItemsSignal do
             v:Disconnect()
         end
@@ -77,15 +103,15 @@ function Events.SellItems(active)
 
     _G.sellItemsSignal = {
         petsFolder.DescendantAdded:Connect(function(item)
-            if table.find(selectedItems, item.Name) then
+            if not table.find(shared.settings.selectedItems, item.Name) then
                 sellPet:FireServer("sellPet", item)
             end
-        end,
+        end),
         trailsFolder.DescendantAdded:Connect(function(item)
-            if table.find(selectedItems, item.Name) then
+            if not table.find(shared.settings.selectedItems, item.Name) then
                 sellTrail:FireServer("sellTrail", item)
             end
-        end
+        end)
     }
 end
 
